@@ -275,6 +275,10 @@ local Shop1 = Shop:Tab({
     Title = "Shop Vũ Khí",
     Icon = "swords"
 })
+local Shop2 = Shop:Tab({
+    Title = "Shop Lặc Vặt",
+    Icon = "baggage-claim"
+})
 
 
 
@@ -397,7 +401,207 @@ Farm:Toggle({
 
 
 -- */  Shop  /* --
+local function getShopItem(textContains)
+    local NK = workspace:WaitForChild("NK ITEM")
 
+    for _, item in ipairs(NK:GetChildren()) do
+        if item.Name == "Toolshop" then
+            local gui = item:FindFirstChild("SurfaceGui")
+            if gui then
+                local label = gui:FindFirstChild("TextLabel")
+                if label and label.Text:lower():find(textContains:lower()) then
+                    return item
+                end
+            end
+        end
+    end
+
+    return nil
+end
+
+Shop2:Button({
+    Title = "Mua BloxyCola",
+    Icon = "cup-soda",
+    Callback = function()
+        local item = getShopItem("BloxyCola")
+        if not item then
+            WindUI:Notify({Title="Không tìm thấy BloxyCola",Icon="x"}); return
+        end
+        local cd = item:FindFirstChildOfClass("ClickDetector")
+        if cd then fireclickdetector(cd); WindUI:Notify({Title="Đã mua BloxyCola",Icon="check"}) end
+    end
+})
+
+Shop2:Button({
+    Title = "Mua Burger",
+    Icon = "hamburger",
+    Callback = function()
+        local item = getShopItem("Burger")
+        if not item then
+            WindUI:Notify({Title="Không tìm thấy Burger",Icon="x"}); return
+        end
+        local cd = item:FindFirstChildOfClass("ClickDetector")
+        if cd then fireclickdetector(cd); WindUI:Notify({Title="Đã mua Burger",Icon="check"}) end
+    end
+})
+
+
+Shop2:Button({
+    Title = "Mua Buff Tốc Chạy",
+    Icon = "zap",
+    Callback = function()
+        local item = getShopItem("tăng tốc độ chạy nhanh")
+        if not item then
+            WindUI:Notify({Title="Không tìm thấy buff chạy nhanh",Icon="x"}); return
+        end
+        local cd = item:FindFirstChildOfClass("ClickDetector")
+        if cd then fireclickdetector(cd); WindUI:Notify({Title="Đã mua buff chạy nhanh",Icon="check"}) end
+    end
+})
+
+Shop2:Button({
+    Title = "Mua Ticket",
+    Icon = "ticket",
+    Callback = function()
+        local item = getShopItem("Buy Ticket")
+        if not item then
+            WindUI:Notify({Title="Không tìm thấy Ticket",Icon="x"}); return
+        end
+        local cd = item:FindFirstChildOfClass("ClickDetector")
+        if cd then fireclickdetector(cd); WindUI:Notify({Title="Đã mua Ticket",Icon="check"}) end
+    end
+})
+
+Shop2:Button({
+    Title = "Mua Đèn Pin",
+    Icon = "flashlight",
+    Callback = function()
+        local item = getShopItem("Mua đèn pin")
+        if not item then
+            WindUI:Notify({Title="Không tìm thấy đèn pin",Icon="x"}); return
+        end
+        local cd = item:FindFirstChildOfClass("ClickDetector")
+        if cd then fireclickdetector(cd); WindUI:Notify({Title="Đã mua đèn pin",Icon="check"}) end
+    end
+})
+
+Shop2:Button({
+    Title = "Mua Vé Máy Bay",
+    Icon = "plane",
+    Callback = function()
+        local item = getShopItem("Mua Ve May Bay")
+        if not item then
+            WindUI:Notify({Title="Không tìm thấy vé máy bay",Icon="x"}); return
+        end
+        local cd = item:FindFirstChildOfClass("ClickDetector")
+        if cd then fireclickdetector(cd); WindUI:Notify({Title="Đã mua vé máy bay",Icon="check"}) end
+    end
+})
+
+Shop2:Button({
+    Title = "Mua Căn Cước Công Dân",
+    Icon = "id-card",
+    Callback = function()
+        local item = getShopItem("Căn cước công dân")
+        if not item then
+            WindUI:Notify({Title="Không tìm thấy item",Icon="x"}); return
+        end
+        local cd = item:FindFirstChildOfClass("ClickDetector")
+        if cd then fireclickdetector(cd); WindUI:Notify({Title="Đã mua CCCD",Icon="check"}) end
+    end
+})
+
+Shop2:Button({
+    Title = "Mua Giấy phép lái xe",
+    Icon = "id-card",
+    Callback = function()
+        local item = getShopItem("Giấy phép lái xe")
+        if not item then
+            WindUI:Notify({
+                Title = "Không tìm thấy item",
+                Desc = "Không tìm thấy 'Giấy phép lái xe: 100VND'",
+                Icon = "x"
+            })
+            return
+        end
+
+        local cd = item:FindFirstChildOfClass("ClickDetector")
+        if cd then
+            fireclickdetector(cd)
+            WindUI:Notify({
+                Title = "Đã mua ",
+                Icon = "check"
+            })
+        else
+            WindUI:Notify({
+                Title = "Lỗi",
+                Icon = "alert-triangle"
+            })
+        end
+    end
+})
+
+Shop1:Button({
+    Title = "Mua RPG",
+    Icon = "rocket",
+    Callback = function()
+        local item = getShopItem("RPG")
+        if not item then
+            WindUI:Notify({
+                Title = "Không tìm thấy item",
+                Desc = "Không tìm thấy 'RPG: 100000 VND'",
+                Icon = "x"
+            })
+            return
+        end
+
+        local cd = item:FindFirstChildOfClass("ClickDetector")
+        if cd then
+            fireclickdetector(cd)
+            WindUI:Notify({
+                Title = "Đã mua RPG",
+                Icon = "check"
+            })
+        else
+            WindUI:Notify({
+                Title = "Lỗi",
+                Desc = "Không có ClickDetector!",
+                Icon = "alert-triangle"
+            })
+        end
+    end
+})
+
+Shop1:Button({
+    Title = "Mua Classic Sword",
+    Icon = "sword",
+    Callback = function()
+        local item = getShopItem("Classic Sword")
+        if not item then
+            WindUI:Notify({
+                Title = "Không tìm thấy item",
+                Desc = "Không tìm thấy 'Classic Sword: 200 VND'",
+                Icon = "x"
+            })
+            return
+        end
+
+        local cd = item:FindFirstChildOfClass("ClickDetector")
+        if cd then
+            fireclickdetector(cd)
+            WindUI:Notify({
+                Title = "Đã mua Classic Sword",
+                Icon = "check"
+            })
+        else
+            WindUI:Notify({
+                Title = "Lỗi",
+                Desc = "Không có ClickDetector của item này!",
+                Icon = "alert-triangle"
+            })
+        end
+    end
+})
 
 
 
