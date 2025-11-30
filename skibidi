@@ -656,7 +656,7 @@ Shop1:Button({
 
 -- */  Config Usage  /* --
 do
-    local CownfigTab = ConfigUsage:Tab({
+    local ConfigTab = ConfigUsage:Tab({
         Title = "Lưu Tùy Chỉnh",
         Icon = "folder",
     })
