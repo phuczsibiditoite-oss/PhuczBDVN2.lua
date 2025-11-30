@@ -256,6 +256,9 @@ end
 local Farm = Window:Section({
     Title = "Farm",
 })
+local Shop = Window:Section({
+    Title = "Shop",
+})
 local ConfigUsage = Window:Section({
     Title = "Lưu Tùy Chỉnh",
 })
@@ -267,6 +270,10 @@ local Other = Window:Section({
 local Farm = Farm:Tab({
     Title = "Farm",
     Icon = "dollar-sign"
+})
+local Shop1 = Shop:Tab({
+    Title = "Shop Vũ Khí",
+    Icon = "swords"
 })
 
 
