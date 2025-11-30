@@ -1,0 +1,382 @@
+local WindUI
+
+do
+    local ok, result = pcall(function()
+        return require("./src/Init")
+    end)
+    
+    if ok then
+        WindUI = result
+    else 
+        WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
+    end
+end
+
+
+
+function createPopup()
+    return WindUI:Popup({
+        Title = "Chào mừng đã đến Phucz's scipt!",
+        Icon = "star",
+        Content = "Có sai sót gì thì xin thông cảm!",
+        Buttons = {
+            {
+                Title = "Chơi zui nha",
+                Icon = "gamepad",
+            }
+        }
+    })
+end
+
+
+
+-- */  Window  /* --
+local Window = WindUI:CreateWindow({
+    Title = "Bus Driver VietNam 2",
+    Author = "by Phucz",
+    Folder = "ftgshub",
+    Icon = "github",
+    IconSize = 22*2,
+    NewElements = true,
+    --Size = UDim2.fromOffset(700,700),
+    
+    HideSearchBar = false,
+    
+    OpenButton = {
+        Title = "---Mở---", -- can be changed
+        CornerRadius = UDim.new(1,0), -- fully rounded
+        StrokeThickness = 3, -- removing outline
+        Enabled = true, -- enable or disable openbutton
+        Draggable = true,
+        OnlyMobile = false,
+        
+        Color = ColorSequence.new( -- gradient
+            Color3.fromHex("#30FF6A"), 
+            Color3.fromHex("#e7ff2f")
+        )
+    },
+    
+    KeySystem = {
+        Title = "Hệ thống key Xd",
+        Note = "Lên Tiktok Xem",
+        KeyValidator = function(EnteredKey)
+            if EnteredKey == "a" then
+                createPopup()
+                return true
+            end
+            return false
+            -- return EnteredKey == "1234" -- if key == "1234" then return true else return false end
+        end
+    }
+})
+
+
+--Window:SetUIScale(.8)
+
+-- */  Tags  /* --
+do
+    Window:Tag({
+        Title = "Version: 1.0.0",
+        Icon = "",
+        Color = Color3.fromHex("#1c1c1c")
+    })
+end
+
+-- */  Theme (soon) ko xoa  /* --
+do
+    --[[WindUI:AddTheme({
+        Name = "Stylish",
+        
+        Accent = Color3.fromHex("#3b82f6"), 
+        Dialog = Color3.fromHex("#1a1a1a"), 
+        Outline = Color3.fromHex("#3b82f6"),
+        Text = Color3.fromHex("#f8fafc"),  
+        Placeholder = Color3.fromHex("#94a3b8"),
+        Button = Color3.fromHex("#334155"), 
+        Icon = Color3.fromHex("#60a5fa"), 
+        
+        WindowBackground = Color3.fromHex("#0f172a"),
+        
+        TopbarButtonIcon = Color3.fromHex("#60a5fa"),
+        TopbarTitle = Color3.fromHex("#f8fafc"),
+        TopbarAuthor = Color3.fromHex("#94a3b8"),
+        TopbarIcon = Color3.fromHex("#3b82f6"),
+        
+        TabBackground = Color3.fromHex("#1e293b"),    
+        TabTitle = Color3.fromHex("#f8fafc"),
+        TabIcon = Color3.fromHex("#60a5fa"),
+        
+        ElementBackground = Color3.fromHex("#1e293b"),
+        ElementTitle = Color3.fromHex("#f8fafc"),
+        ElementDesc = Color3.fromHex("#cbd5e1"),
+        ElementIcon = Color3.fromHex("#60a5fa"),
+    })--]]
+    
+    -- WindUI:SetTheme("Stylish")
+end
+
+
+
+-- */ ko xoa /* --
+local function parseJSON(luau_table, indent, level, visited)
+    indent = indent or 2
+    level = level or 0
+    visited = visited or {}
+    
+    local currentIndent = string.rep(" ", level * indent)
+    local nextIndent = string.rep(" ", (level + 1) * indent)
+    
+    if luau_table == nil then
+        return "null"
+    end
+    
+    local dataType = type(luau_table)
+    
+    if dataType == "table" then
+        if visited[luau_table] then
+            return "\"[Circular Reference]\""
+        end
+        
+        visited[luau_table] = true
+        
+        local isArray = true
+        local maxIndex = 0
+        
+        for k, _ in pairs(luau_table) do
+            if type(k) == "number" and k > maxIndex then
+                maxIndex = k
+            end
+            if type(k) ~= "number" or k <= 0 or math.floor(k) ~= k then
+                isArray = false
+                break
+            end
+        end
+        
+        local count = 0
+        for _ in pairs(luau_table) do
+            count = count + 1
+        end
+        if count ~= maxIndex and isArray then
+            isArray = false
+        end
+        
+        if count == 0 then
+            return "{}"
+        end
+        
+        if isArray then
+            if count == 0 then
+                return "[]"
+            end
+            
+            local result = "[\n"
+            
+            for i = 1, maxIndex do
+                result = result .. nextIndent .. parseJSON(luau_table[i], indent, level + 1, visited)
+                if i < maxIndex then
+                    result = result .. ","
+                end
+                result = result .. "\n"
+            end
+            
+            result = result .. currentIndent .. "]"
+            return result
+        else
+            local result = "{\n"
+            local first = true
+            
+            local keys = {}
+            for k in pairs(luau_table) do
+                table.insert(keys, k)
+            end
+            table.sort(keys, function(a, b)
+                if type(a) == type(b) then
+                    return tostring(a) < tostring(b)
+                else
+                    return type(a) < type(b)
+                end
+            end)
+            
+            for _, k in ipairs(keys) do
+                local v = luau_table[k]
+                if not first then
+                    result = result .. ",\n"
+                else
+                    first = false
+                end
+                
+                if type(k) == "string" then
+                    result = result .. nextIndent .. "\"" .. k .. "\": "
+                else
+                    result = result .. nextIndent .. "\"" .. tostring(k) .. "\": "
+                end
+                
+                result = result .. parseJSON(v, indent, level + 1, visited)
+            end
+            
+            result = result .. "\n" .. currentIndent .. "}"
+            return result
+        end
+    elseif dataType == "string" then
+        local escaped = luau_table:gsub("\\", "\\\\")
+        escaped = escaped:gsub("\"", "\\\"")
+        escaped = escaped:gsub("\n", "\\n")
+        escaped = escaped:gsub("\r", "\\r")
+        escaped = escaped:gsub("\t", "\\t")
+        
+        return "\"" .. escaped .. "\""
+    elseif dataType == "number" then
+        return tostring(luau_table)
+    elseif dataType == "boolean" then
+        return luau_table and "true" or "false"
+    elseif dataType == "function" then
+        return "\"function\""
+    else
+        return "\"" .. dataType .. "\""
+    end
+end
+
+local function tableToClipboard(luau_table, indent)
+    indent = indent or 4
+    local jsonString = parseJSON(luau_table, indent)
+    setclipboard(jsonString)
+    return jsonString
+end
+
+
+-- */  About Tab  /* --
+do
+    local AboutTab = Window:Tab({
+        Title = "Update Log",
+        Icon = "info",
+    })
+end
+
+-- */  Tab cha  /* --
+local ElementsSection = Window:Section({
+    Title = "Farm",
+})
+local ConfigUsageSection = Window:Section({
+    Title = "Lưu Tùy Chỉnh",
+})
+local OtherSection = Window:Section({
+    Title = "Other",
+})
+
+
+-- */  Config Usage  /* --
+do -- config panel
+    local ConfigTab = ConfigUsageSection:Tab({
+        Title = "Lưu Tùy Chỉnh",
+        Icon = "folder",
+    })
+
+    local ConfigManager = Window.ConfigManager
+    local ConfigName = "default"
+
+    local ConfigNameInput = ConfigTab:Input({
+        Title = "Tên Cài đặt",
+        Icon = "file-cog",
+        Callback = function(value)
+            ConfigName = value
+        end
+    })
+
+    ConfigTab:Space()
+    
+    local AutoLoadToggle = ConfigTab:Toggle({
+        Title = "Auto load cài đặt đã chọn",
+        Value = false,
+        Callback = function(v)
+            Window.CurrentConfig:SetAutoLoad(v)
+        end
+    })
+
+    ConfigTab:Space()
+
+    local AllConfigs = ConfigManager:AllConfigs()
+    local DefaultValue = table.find(AllConfigs, ConfigName) and ConfigName or nil
+
+    local AllConfigsDropdown = ConfigTab:Dropdown({
+        Title = "Tất Cả Cài Đặt",
+        Desc = "Select existing configs",
+        Values = AllConfigs,
+        Value = DefaultValue,
+        Callback = function(value)
+            ConfigName = value
+            ConfigNameInput:Set(value)
+            
+            AutoLoadToggle:Set(ConfigManager:GetConfig(ConfigName).AutoLoad or false)
+        end
+    })
+
+    ConfigTab:Space()
+
+    ConfigTab:Button({
+        Title = "Lưu Cài Đặt",
+        Icon = "",
+        Justify = "Center",
+        Callback = function()
+            Window.CurrentConfig = ConfigManager:Config(ConfigName)
+            if Window.CurrentConfig:Save() then
+                WindUI:Notify({
+                    Title = "Đã Lưu Cài Đặt",
+                    Desc = "Cài Đặt '" .. ConfigName .. "' Đã Lưu",
+                    Icon = "check",
+                })
+            end
+            
+            AllConfigsDropdown:Refresh(ConfigManager:AllConfigs())
+        end
+    })
+
+    ConfigTab:Space()
+
+    ConfigTab:Button({
+        Title = "Load Cài Đặt",
+        Icon = "",
+        Justify = "Center",
+        Callback = function()
+            Window.CurrentConfig = ConfigManager:CreateConfig(ConfigName)
+            if Window.CurrentConfig:Load() then
+                WindUI:Notify({
+                    Title = "Đã Load Cài Đặt",
+                    Desc = "Cài đặt '" .. ConfigName .. "'Đã load",
+                    Icon = "refresh-cw",
+                })
+            end
+        end
+    })
+
+    ConfigTab:Space()
+
+    ConfigTab:Button({
+        Title = "Print AutoLoad Configs",
+        Icon = "",
+        Justify = "Center",
+        Callback = function()
+            print(HttpService:JSONDecode(ConfigManager:GetAutoLoadConfigs()))
+        end
+    })
+end
+
+
+
+
+
+
+
+-- */ Using Nebula Icons /* --
+do
+    local NebulaIcons = loadstring(game:HttpGetAsync("https://raw.nebulasoftworks.xyz/nebula-icon-library-loader"))()
+    
+    -- Adding icons (e.g. Fluency)
+    WindUI.Creator.AddIcons("fluency",    NebulaIcons.Fluency)
+    --               ^ Icon name          ^ Table of Icons
+    
+    -- You can also add nebula icons
+    WindUI.Creator.AddIcons("nebula",    NebulaIcons.nebulaIcons)
+    
+    -- Usage ↑ ↓
+    
+end
