@@ -253,20 +253,199 @@ do
 end
 
 -- */  Tab cha  /* --
-local ElementsSection = Window:Section({
+local Farm = Window:Section({
     Title = "Farm",
 })
-local ConfigUsageSection = Window:Section({
+local ConfigUsage = Window:Section({
     Title = "Lưu Tùy Chỉnh",
 })
-local OtherSection = Window:Section({
-    Title = "Other",
+local Other = Window:Section({
+    Title = "Khác",
 })
+
+--*/ Tab con /*--
+local Farm = Farm:Tab({
+    Title = "Farm",
+    Icon = "dollar-sign"
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- */  Farm  /* --
+Farm:Toggle({
+    Title = "Farm NK City",
+    Desc = "Farm nhanh",
+    Icon = "dollar-sign",
+    Value = false,
+    Callback = function(state)
+        local part = workspace:WaitForChild("ChoKhachSystem")
+            .KhongXoa
+            :WaitForChild("TargetPart")
+
+        local promptPart = workspace:WaitForChild("ChoKhachSystem")
+            .KhongXoa
+            :WaitForChild("GetJobPart")
+        local prompt = promptPart:WaitForChild("ProximityPrompt")
+
+        -- Vị trí dịch chuyển
+        local tpPos = Vector3.new(810, 3, -220)
+
+        if state then
+            -- Ẩn part + dịch chuyển part
+            part.Transparency = 1
+            part.CanCollide = false
+            part.Position = tpPos
+
+            -- Bật LOOP
+            _G.AutoTP = true
+            task.spawn(function()
+                while _G.AutoTP do
+                    task.wait(0.0001)
+
+                    local plr = game.Players.LocalPlayer
+                    local char = plr.Character
+                    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+
+                    if hrp then
+                        hrp.CFrame = CFrame.new(tpPos)
+                    end
+
+                    -- Auto nhấn ProximityPrompt
+                    if prompt then
+                        prompt:InputHoldBegin()
+                        task.wait(0.0001)
+                        prompt:InputHoldEnd()
+                    end
+                end
+            end)
+
+        else
+            -- Tắt toggle → hiện lại
+            part.Transparency = 1
+            part.CanCollide = false
+
+            -- Tắt LOOP
+            _G.AutoTP = false
+        end
+    end
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- */  Shop  /* --
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- */  Animation  /* --
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- */  Gui  /* --
+
+
+
+
+
+
+
+
+
+
 
 
 -- */  Config Usage  /* --
-do -- config panel
-    local ConfigTab = ConfigUsageSection:Tab({
+do
+    local CownfigTab = ConfigUsage:Tab({
         Title = "Lưu Tùy Chỉnh",
         Icon = "folder",
     })
