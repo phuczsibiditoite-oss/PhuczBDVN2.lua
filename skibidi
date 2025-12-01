@@ -1,3 +1,127 @@
+-- ==========================
+-- Loading Screen + Progress
+-- ==========================
+
+local Player = game.Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+local TweenService = game:GetService("TweenService")
+
+-- ==========================
+-- Tạo GUI loading
+-- ==========================
+
+local LoadingGui = Instance.new("ScreenGui")
+LoadingGui.IgnoreGuiInset = true
+LoadingGui.ResetOnSpawn = false
+LoadingGui.Name = "LoadingScreen"
+LoadingGui.Parent = PlayerGui
+
+-- Nền đen
+local Background = Instance.new("Frame", LoadingGui)
+Background.Size = UDim2.new(1, 0, 1, 0)
+Background.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+
+-- Text Loading
+local LoadingText = Instance.new("TextLabel", Background)
+LoadingText.Size = UDim2.new(1, 0, 0, 60)
+LoadingText.Position = UDim2.new(0, 0, 0.45, 0)
+LoadingText.BackgroundTransparency = 1
+LoadingText.Text = "Đang tải hệ thống..."
+LoadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
+LoadingText.Font = Enum.Font.GothamBold
+LoadingText.TextSize = 32
+
+-- Thanh chứa
+local ProgressBarBG = Instance.new("Frame", Background)
+ProgressBarBG.Size = UDim2.new(0.5, 0, 0, 15)
+ProgressBarBG.Position = UDim2.new(0.5, 0, 0.55, 0)
+ProgressBarBG.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+ProgressBarBG.BorderSizePixel = 0
+ProgressBarBG.AnchorPoint = Vector2.new(0.5, 0.5)
+ProgressBarBG.ClipsDescendants = true
+
+-- Thanh tiến trình
+local ProgressBar = Instance.new("Frame", ProgressBarBG)
+ProgressBar.Size = UDim2.new(0, 0, 1, 0)
+ProgressBar.BackgroundColor3 = Color3.fromRGB(0, 200, 255)
+ProgressBar.BorderSizePixel = 0
+
+-- Gradient
+local gradient = Instance.new("UIGradient", ProgressBar)
+gradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 200, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 255, 150))
+}
+
+-- ==========================
+-- Danh sách vị trí teleport
+-- ==========================
+
+local TeleportPositions = {
+    Vector3.new(629, 3, -866),
+    Vector3.new(-5253, -3, 14627),
+    Vector3.new(4818, 3, -1204),
+    Vector3.new(-5550, -5, 7277),
+    Vector3.new(810, 3, -220),
+    Vector3.new(19032, 66, 666)
+}
+
+local Total = #TeleportPositions
+
+-- Lưu vị trí ban đầu
+local char = Player.Character or Player.CharacterAdded:Wait()
+local hrp = char:WaitForChild("HumanoidRootPart")
+local OriginalPosition = hrp.CFrame
+
+-- ==========================
+-- Hàm TP an toàn
+-- ==========================
+
+local function safeTP(pos)
+    local character = Player.Character or Player.CharacterAdded:Wait()
+    local root = character:WaitForChild("HumanoidRootPart")
+    root.CFrame = CFrame.new(pos)
+end
+
+-- ==========================
+-- Chạy tiến trình + TP
+-- ==========================
+
+for i, pos in ipairs(TeleportPositions) do
+    safeTP(pos)
+
+    local percent = i / Total
+
+    TweenService:Create(
+        ProgressBar,
+        TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+        {Size = UDim2.new(percent, 0, 1, 0)}
+    ):Play()
+
+    LoadingText.Text = string.format("Đang xử lý... (%d/%d)", i, Total)
+
+    task.wait(0.35)
+end
+
+-- ==========================
+-- Teleport lại chỗ cũ
+-- ==========================
+
+safeTP(OriginalPosition.Position)
+
+-- ==========================
+-- Ẩn loading
+-- ==========================
+
+TweenService:Create(
+    Background,
+    TweenInfo.new(0.4, Enum.EasingStyle.Quad),
+    {BackgroundTransparency = 1}
+):Play()
+
+task.wait(0.4)
+LoadingGui:Destroy()
+
 local WindUI
 
 do
@@ -16,7 +140,7 @@ end
 
 function createPopup()
     return WindUI:Popup({
-        Title = "Chào mừng đã đến Phucz's scipt!",
+        Title = "Chào mừng đã đến Hanna's scipt!",
         Icon = "star",
         Content = "Có sai sót gì thì xin thông cảm!",
         Buttons = {
@@ -33,8 +157,8 @@ end
 -- */  Window  /* --
 local Window = WindUI:CreateWindow({
     Title = "Bus Driver VietNam 2",
-    Author = "by Phucz",
-    Folder = "ftgshub",
+    Author = "by Hanna",
+    Folder = "Hannahub",
     Icon = "github",
     IconSize = 22*2,
     NewElements = true,
@@ -255,15 +379,19 @@ end
 -- */  Tab cha  /* --
 local Farm = Window:Section({
     Title = "Farm",
+    Icon = "dollar-sign"
 })
 local Shop = Window:Section({
     Title = "Shop",
+    Icon = "shopping-cart"
+})
+local Teleport = Window:Tab({
+    Title = "Teleport",
+    Icon = "navigation"
 })
 local ConfigUsage = Window:Section({
     Title = "Lưu Tùy Chỉnh",
-})
-local Other = Window:Section({
-    Title = "Khác",
+    Icon = "folder"
 })
 
 --*/ Tab con /*--
@@ -602,6 +730,66 @@ Shop1:Button({
         end
     end
 })
+
+
+
+
+
+
+
+
+
+
+-- */  Teleport  /* --
+-- Danh sách điểm dịch chuyển
+local teleportList = {
+    ["Sảnh"] = Vector3.new(17, 4, -2015),
+    ["Quán Cafe"] = Vector3.new(613, 3, -940)
+}
+
+local selectedTP = nil
+
+-- Dropdown chọn địa điểm (chú ý: dùng 'Values')
+local TPDropdown = Teleport:Dropdown({
+    Title = "Chọn địa điểm",
+    Desc = "Chọn nơi muốn dịch chuyển",
+    Values = {"Sảnh", "Quán Cafe"},
+    Value = "Sảnh", -- mặc định
+    Callback = function(selected)
+        selectedTP = teleportList[selected]
+    end
+})
+
+-- Nút Teleport
+Teleport:Button({
+    Title = "Dịch chuyển ngay",
+    Desc = "Bấm để đến vị trí đã chọn",
+    Icon = "map-pin",
+    Callback = function()
+        if not selectedTP then
+            WindUI:Notify({
+                Title = "Chưa chọn điểm",
+                Desc = "Vui lòng chọn địa điểm trước",
+                Icon = "x"
+            })
+            return
+        end
+
+        local player = game.Players.LocalPlayer
+        local char = player.Character or player.CharacterAdded:Wait()
+        local hrp = char:WaitForChild("HumanoidRootPart")
+
+        hrp.CFrame = CFrame.new(selectedTP)
+    end
+})
+
+
+
+
+
+
+
+
 
 
 
