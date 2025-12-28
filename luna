@@ -6,7 +6,7 @@
 -- ⣿⣿⣿⠏⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⢸⣿⣿
 -- ⣿⣿⡏⠀⠀⢀⠀⠀⠀⢸⣿⣧⠀⠀⠀⠘⣿⣿⣿⣿⣿⣿⡿⠇⠀⠀⠀⣾⣿   
 -- ⣿⣿⠀⠀⠀⣾⠀⠀⠀⢸⣿⣿⣄⠀⠀⠀⠈⠉⠉⠉⠉⠉⠀⠀⠀⠀⣼⣿⣿⣿    --Đứa nào trôm script của tao trứng dái nổ tung--
--- ⣿⡏⠀⠀⢸⣿⠀⠀⠀⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿
+-- ⣿⡏⠀⠀⢸⣿⠀⠀⠀⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿                                             -Phucs-
 -- ⣿⡇⠀⠀⢸⣿⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣶⣤⣤⣤⣶⡶⠀⠀⣿⣿⣿⣿⣿
 -- ⣿⡇⠀⠀⠸⣿⠀⠀⠀⣿⣿⣿⣿⣿⡿⠛⠛⠛⢿⣿⣿⡇⠀⠀⠀⠈⠙⣿⣿
 -- ⣿⣿⡄⠀⠀⠉⠀⠀⠀⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠙⢿⣿⣶⣶⣄⠀⠀⢸⣿
@@ -122,7 +122,7 @@ function createPopup()
 end
 local Window = WindUI:CreateWindow({
     Title = "Bus Driver VietNam 2",
-    Author = "by DaoPhuMienTay",
+    Author = "by Phucs",
     Folder = "BDVN2hub",
     Icon = "github",
     IconSize = 22*2,
@@ -669,7 +669,7 @@ Guis:Button({
 })
 Guis:Button({
     Title = "The block's aura",
-    Icon = "tornado",
+    Icon = "file-text",
     Callback = function()
         WindUI:Notify({
             Title = "Đang Chạy Script",
@@ -706,6 +706,36 @@ Guis:Button({
             Time = 3
         })
         local url = "https://raw.githubusercontent.com/phuczsibiditoite-oss/Reachgui.lua/refs/heads/main/luna"
+        local success, result = pcall(function()
+            local scriptFunc = loadstring(game:HttpGet(url))
+            if scriptFunc then
+                scriptFunc()
+            end
+        end)
+        if success then
+            WindUI:Notify({
+                Title = "Thành công",
+                Description = "Script đã chạy xong!",
+                Time = 3
+            })
+        else
+            WindUI:Notify({
+                Title = "Lỗi",
+                Description = "Script gặp lỗi: " .. tostring(result),
+                Time = 5
+            })
+        end
+    end
+})
+Guis:Button({
+    Title = "Chỉnh Hitbox",
+    Icon = "file-text",
+    Callback = function()
+        WindUI:Notify({
+            Title = "Đang Chạy Script",
+            Time = 3
+        })
+        local url = "https://raw.githubusercontent.com/phuczsibiditoite-oss/Hitbox.lua/refs/heads/main/luna"
         local success, result = pcall(function()
             local scriptFunc = loadstring(game:HttpGet(url))
             if scriptFunc then
@@ -838,19 +868,19 @@ StarterGui:SetCore("SendNotification", {
     Title = "Ê",
     Text = "Mong là bro thích script này!",
     Icon = content,
-    Duration = 5
+    Duration = 10
 })
 
 StarterGui:SetCore("SendNotification", {
     Title = "Lên tiktok fl tui đi",
     Text = "Acc tiktok:PhucsScripter",
     Icon = content,
-    Duration = 5
+    Duration = 10
 })
 
 StarterGui:SetCore("SendNotification", {
     Title = "Được Tạo bởi",
     Text = "Phucs!",
     Icon = content,
-    Duration = 5
+    Duration = 10
 })
