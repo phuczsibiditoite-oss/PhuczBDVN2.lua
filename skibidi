@@ -6,7 +6,7 @@
 -- ⣿⣿⣿⠏⠀⠀⠀⠀⠀⢸⣿⡇⠀⠀⠀⢿⣿⣿⣿⣿⣿⣿⣿⣿⠀⠀⠀⢸⣿⣿
 -- ⣿⣿⡏⠀⠀⢀⠀⠀⠀⢸⣿⣧⠀⠀⠀⠘⣿⣿⣿⣿⣿⣿⡿⠇⠀⠀⠀⣾⣿   
 -- ⣿⣿⠀⠀⠀⣾⠀⠀⠀⢸⣿⣿⣄⠀⠀⠀⠈⠉⠉⠉⠉⠉⠀⠀⠀⠀⣼⣿⣿⣿    --Đứa nào trôm script của tao trứng dái nổ tung--
--- ⣿⡏⠀⠀⢸⣿⠀⠀⠀⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿                                             -Phucs-
+-- ⣿⡏⠀⠀⢸⣿⠀⠀⠀⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⣿⣿⣿⣿
 -- ⣿⡇⠀⠀⢸⣿⠀⠀⠀⣿⣿⣿⣿⣿⣿⣿⣶⣤⣤⣤⣶⡶⠀⠀⣿⣿⣿⣿⣿
 -- ⣿⡇⠀⠀⠸⣿⠀⠀⠀⣿⣿⣿⣿⣿⡿⠛⠛⠛⢿⣿⣿⡇⠀⠀⠀⠈⠙⣿⣿
 -- ⣿⣿⡄⠀⠀⠉⠀⠀⠀⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠙⢿⣿⣶⣶⣄⠀⠀⢸⣿
@@ -825,3 +825,32 @@ do
     WindUI.Creator.AddIcons("fluency",    NebulaIcons.Fluency)
     WindUI.Creator.AddIcons("nebula",    NebulaIcons.nebulaIcons)
 end
+
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local StarterGui = game:GetService("StarterGui")
+local userId = Players:GetUserIdFromNameAsync("xxitatzukixx")
+local thumbType = Enum.ThumbnailType.HeadShot
+local thumbSize = Enum.ThumbnailSize.Size420x420
+local content, isReady = Players:GetUserThumbnailAsync(userId, thumbType, thumbSize)
+
+StarterGui:SetCore("SendNotification", {
+    Title = "Ê",
+    Text = "Mong là bro thích script này!",
+    Icon = content,
+    Duration = 5
+})
+
+StarterGui:SetCore("SendNotification", {
+    Title = "Lên tiktok fl tui đi",
+    Text = "Acc tiktok:PhucsScripter",
+    Icon = content,
+    Duration = 5
+})
+
+StarterGui:SetCore("SendNotification", {
+    Title = "Được Tạo bởi",
+    Text = "Phucs!",
+    Icon = content,
+    Duration = 5
+})
