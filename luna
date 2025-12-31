@@ -1,4 +1,9 @@
--- ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+_G.Luna = _G.Luna or {}
+local Luna = _G.Luna
+
+function Luna.Start()
+
+ -- ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 -- ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠋⠉⠀⠀⠈⠉⠻⠿⠿⣿⣿⣿⣿⣿⣿⣿
 -- ⣿⣿⣿⣿⣿⣿⣿⣿⣿⠏⠁⠀⠀⢀⡀⠀⠀⠀⠀⠀⠀⠀⠈⠙⢿⣿⣿⣿⣿
 -- ⣿⣿⣿⣿⣿⣿⣿⡿⠁⠀⠀⢠⣾⠏⠀⠀⠀⢀⣀⣄⣀⠀⠀⠀⠀⠘⣿⣿⣿
@@ -889,3 +894,15 @@ StarterGui:SetCore("SendNotification", {
     Icon = content,
     Duration = 10
 })
+
+end
+
+function Luna.Stop()
+    if game.Players.LocalPlayer:FindFirstChild("PlayerGui") then
+        local gui = game.Players.LocalPlayer.PlayerGui:FindFirstChild("LoadingScreen")
+        if gui then gui:Destroy() end
+    end
+    _G.AutoTP = false
+end
+
+return Luna
