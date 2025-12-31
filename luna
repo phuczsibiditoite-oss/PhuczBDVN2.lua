@@ -107,19 +107,7 @@ do
         WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
     end
 end
-function createPopup()
-    return WindUI:Popup({
-        Title = "Chào mừng đã đến Hanna's scipt!",
-        Icon = "star",
-        Content = "Có sai sót gì thì xin thông cảm!",
-        Buttons = {
-            {
-                Title = "Chơi zui nha",
-                Icon = "gamepad",
-            }
-        }
-    })
-end
+
 local Window = WindUI:CreateWindow({
     Title = "Bus Driver VietNam 2",
     Author = "by Phucs",
@@ -143,7 +131,7 @@ local Window = WindUI:CreateWindow({
 })
 do
     Window:Tag({
-        Title = "Version: 1.0.0",
+        Title = "Phiên bản: 36",
         Icon = "",
         Color = Color3.fromHex("#1c1c1c")
     })
@@ -253,6 +241,23 @@ local function tableToClipboard(luau_table, indent)
     setclipboard(jsonString)
     return jsonString
 end
+
+local AboutTab = Window:Tab({
+        Title = "Thông tin",
+        Icon = "info",
+    })
+
+    local AboutSection = AboutTab:Section({
+        Title = "Thông tin về script",
+    })
+
+    AboutSection:Section({
+        Title = [[Script được tạo bởi Phúc trong lúc đang rảnh :).]],
+        TextSize = 18,
+        TextTransparency = .35,
+        FontWeight = Enum.FontWeight.Medium,
+    })
+
 local Farm = Window:Section({
     Title = "Farm",
     Icon = "dollar-sign"
@@ -371,7 +376,7 @@ Shop2:Button({
     end
 })
 Shop2:Button({
-    Title = "Mua Buff Tốc Chạy",
+    Title = "Mua Lò Xo",
     Icon = "zap",
     Callback = function()
         local item = getShopItem("tăng tốc độ chạy nhanh")
