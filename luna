@@ -978,20 +978,6 @@ local thumbSize = Enum.ThumbnailSize.Size420x420
 local content, isReady = Players:GetUserThumbnailAsync(userId, thumbType, thumbSize)
 
 StarterGui:SetCore("SendNotification", {
-    Title = "Ê",
-    Text = "Mong là bro thích script này!",
-    Icon = content,
-    Duration = 10
-})
-
-StarterGui:SetCore("SendNotification", {
-    Title = "Lên tiktok fl tui đi",
-    Text = "Acc tiktok:PhucsScripter",
-    Icon = content,
-    Duration = 10
-})
-
-StarterGui:SetCore("SendNotification", {
     Title = "Được Tạo bởi",
     Text = "Phucs!",
     Icon = content,
