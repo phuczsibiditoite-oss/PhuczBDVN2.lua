@@ -16,74 +16,6 @@
 local Player = game.Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 local TweenService = game:GetService("TweenService")
-local LoadingGui = Instance.new("ScreenGui")
-LoadingGui.IgnoreGuiInset = true
-LoadingGui.ResetOnSpawn = false
-LoadingGui.Name = "LoadingScreen"
-LoadingGui.Parent = PlayerGui
-local Background = Instance.new("Frame", LoadingGui)
-Background.Size = UDim2.new(1, 0, 1, 0)
-Background.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-local LoadingText = Instance.new("TextLabel", Background)
-LoadingText.Size = UDim2.new(1, 0, 0, 60)
-LoadingText.Position = UDim2.new(0, 0, 0.45, 0)
-LoadingText.BackgroundTransparency = 1
-LoadingText.Text = "Đang tải hệ thống..."
-LoadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
-LoadingText.Font = Enum.Font.GothamBold
-LoadingText.TextSize = 32
-local ProgressBarBG = Instance.new("Frame", Background)
-ProgressBarBG.Size = UDim2.new(0.5, 0, 0, 15)
-ProgressBarBG.Position = UDim2.new(0.5, 0, 0.55, 0)
-ProgressBarBG.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-ProgressBarBG.BorderSizePixel = 0
-ProgressBarBG.AnchorPoint = Vector2.new(0.5, 0.5)
-ProgressBarBG.ClipsDescendants = true
-local ProgressBar = Instance.new("Frame", ProgressBarBG)
-ProgressBar.Size = UDim2.new(0, 0, 1, 0)
-ProgressBar.BackgroundColor3 = Color3.fromRGB(0, 200, 255)
-ProgressBar.BorderSizePixel = 0
-local gradient = Instance.new("UIGradient", ProgressBar)
-gradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 200, 255)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(0, 255, 150))
-}
-local TeleportPositions = {
-    Vector3.new(629, 3, -866),
-    Vector3.new(-5253, -3, 14627),
-    Vector3.new(4818, 3, -1204),
-    Vector3.new(-5550, -5, 7277),
-    Vector3.new(810, 3, -220),
-    Vector3.new(19032, 66, 666)
-}
-local Total = #TeleportPositions
-local char = Player.Character or Player.CharacterAdded:Wait()
-local hrp = char:WaitForChild("HumanoidRootPart")
-local OriginalPosition = hrp.CFrame
-local function safeTP(pos)
-    local character = Player.Character or Player.CharacterAdded:Wait()
-    local root = character:WaitForChild("HumanoidRootPart")
-    root.CFrame = CFrame.new(pos)
-end
-for i, pos in ipairs(TeleportPositions) do
-    safeTP(pos)
-    local percent = i / Total
-    TweenService:Create(
-        ProgressBar,
-        TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-        {Size = UDim2.new(percent, 0, 1, 0)}
-    ):Play()
-    LoadingText.Text = string.format("Đang xử lý... (%d/%d)", i, Total)
-    task.wait(0.35)
-end
-safeTP(OriginalPosition.Position)
-TweenService:Create(
-    Background,
-    TweenInfo.new(0.4, Enum.EasingStyle.Quad),
-    {BackgroundTransparency = 1}
-):Play()
-task.wait(0.4)
-LoadingGui:Destroy()
 local SoundService = game:GetService("SoundService")
 local function playSound(soundId)
     local sound = Instance.new("Sound")
@@ -296,57 +228,189 @@ local Shop2 = Shop:Tab({
 })
 
 
-Farm:Toggle({
-    Title = "Farm NK City",
-    Desc = "Farm nhanh",
+local executed = false
+
+Farm:Button({
+    Title = "Giao hàng",
+    Desc = "Siêu tốc (muốn tắt thì bấm dừng)",
     Icon = "dollar-sign",
-    Value = false,
-    Callback = function(state)
+    Callback = function()
+        if executed then return end -- anti chạy nhiều lần
+        executed = true
 
-        local part = workspace:WaitForChild("ChoKhachSystem")
-            .KhongXoa
-            :WaitForChild("TargetPart")
+        _G.AutoDelivery = true
+        local player = game.Players.LocalPlayer
 
-        local promptPart = workspace:WaitForChild("ChoKhachSystem")
-            .KhongXoa
-            :WaitForChild("GetJobPart")
+        -- ================= ANTI AFK =================
+        local VirtualUser = game:GetService("VirtualUser")
 
-        local prompt = promptPart:WaitForChild("ProximityPrompt")
-        local tpPos = Vector3.new(810, 3, -220)
+        player.Idled:Connect(function()
+            VirtualUser:CaptureController()
+            VirtualUser:ClickButton2(Vector2.new(0,0))
+        end)
 
-        if state then
-            part.Transparency = 1
-            part.CanCollide = false
-            part.Position = tpPos
+        task.spawn(function()
+            while _G.AutoDelivery do
+                VirtualUser:CaptureController()
+                VirtualUser:ClickButton2(Vector2.new(0,0))
+                task.wait(60)
+            end
+        end)
+        -- ===========================================
 
-            _G.AutoTP = true
-            task.spawn(function()
-                while _G.AutoTP do
-                    task.wait(0.0001)
+        -- 1. DỌN DẸP MAP & GUI
+        pcall(function()
+            local playerGui = player:WaitForChild("PlayerGui")
+            for _, gui in pairs(playerGui:GetChildren()) do
+                if gui:IsA("ScreenGui") then gui.Enabled = false end
+            end
+            local ds = workspace:FindFirstChild("Delivery System")
+            if ds and ds:FindFirstChild("Kho") then ds.Kho:Destroy() end
+            for _, obj in pairs(workspace:GetChildren()) do
+                if obj.Name ~= "Delivery System" and obj.Name ~= player.Name and not obj:IsA("Camera") and not obj:IsA("Terrain") then
+                    obj:Destroy()
+                end
+            end
+        end)
 
-                    local plr = game.Players.LocalPlayer
-                    local char = plr.Character
-                    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+        -- 2. ÉP PROMPT 0S (Liên tục)
+        _G.PromptConn = workspace.DescendantAdded:Connect(function(v)
+            if v:IsA("ProximityPrompt") then v.HoldDuration = 0 end
+        end)
+        task.spawn(function()
+            while _G.AutoDelivery do
+                for _, v in pairs(workspace:GetDescendants()) do
+                    if v:IsA("ProximityPrompt") and v.HoldDuration ~= 0 then v.HoldDuration = 0 end
+                end
+                task.wait(0.5)
+            end
+        end)
 
-                    if hrp then
-                        hrp.CFrame = CFrame.new(tpPos)
-                    end
+        -- 3. GUI (GIỮ NGUYÊN)
+        local gui = Instance.new("ScreenGui")
+        gui.IgnoreGuiInset = true
+        gui.ResetOnSpawn = false
+        gui.Parent = player.PlayerGui
+        _G.AFKGui = gui
 
-                    if prompt then
-                        prompt:InputHoldBegin()
-                        task.wait(0.0001)
-                        prompt:InputHoldEnd()
+        local bg = Instance.new("Frame", gui)
+        bg.Size = UDim2.new(1,0,1,0)
+        bg.BackgroundColor3 = Color3.fromRGB(10,10,10)
+
+        local main = Instance.new("Frame", bg)
+        main.Size = UDim2.new(0, 350, 0, 220)
+        main.Position = UDim2.new(0.5, -175, 0.5, -110)
+        main.BackgroundColor3 = Color3.fromRGB(20,20,20)
+        main.BorderSizePixel = 0
+        Instance.new("UICorner", main).CornerRadius = UDim.new(0,15)
+
+        local stroke = Instance.new("UIStroke", main)
+        stroke.Color = Color3.fromRGB(0,170,255)
+        stroke.Thickness = 2
+
+        local title = Instance.new("TextLabel", main)
+        title.Size = UDim2.new(1,0,0,40)
+        title.BackgroundTransparency = 1
+        title.Text = "Giao hàng siêu tốc"
+        title.TextColor3 = Color3.fromRGB(0,170,255)
+        title.Font = Enum.Font.GothamBold
+        title.TextScaled = true
+
+        local status = Instance.new("TextLabel", main)
+        status.Size = UDim2.new(1,0,0,40)
+        status.Position = UDim2.new(0,0,0.35,0)
+        status.BackgroundTransparency = 1
+        status.TextColor3 = Color3.new(1,1,1)
+        status.Font = Enum.Font.Gotham
+        status.TextScaled = true
+        status.Text = "Số tiền hiện tại: "
+
+        local startCash = player.leaderstats.Cash.Value
+
+        local farmed = Instance.new("TextLabel", main)
+        farmed.Size = UDim2.new(1,0,0,40)
+        farmed.Position = UDim2.new(0,0,0.55,0)
+        farmed.BackgroundTransparency = 1
+        farmed.TextColor3 = Color3.fromRGB(0,255,150)
+        farmed.Font = Enum.Font.GothamBold
+        farmed.TextScaled = true
+        farmed.Text = "Đã farm được: "
+
+        local btn = Instance.new("TextButton", main)
+        btn.Size = UDim2.new(0,180,0,45)
+        btn.Position = UDim2.new(0.5,-90,0.8,0)
+        btn.BackgroundColor3 = Color3.fromRGB(200,30,30)
+        btn.Text = "Dừng"
+        btn.TextColor3 = Color3.new(1,1,1)
+        btn.Font = Enum.Font.GothamBold
+        btn.TextScaled = true
+        Instance.new("UICorner", btn)
+
+        btn.MouseButton1Click:Connect(function()
+            game:GetService("TeleportService"):TeleportToPlaceInstance(
+                game.PlaceId,
+                game.JobId,
+                player
+            )
+        end)
+
+        -- 4. FARM (GIỮ NGUYÊN)
+        task.spawn(function()
+            while _G.AutoDelivery do
+                local char = player.Character
+                local hrp = char and char:FindFirstChild("HumanoidRootPart")
+                if hrp then
+                    pcall(function()
+                        local current = player.leaderstats.Cash.Value
+                        status.Text = "Số tiền hiện tại: " .. tostring(current)
+                        farmed.Text = "Đã farm được: " .. tostring(current - startCash)
+                    end)
+
+                    local target = workspace:FindFirstChild("Delivery_FakeTarget")
+                    
+                    if not target then
+                        local station = workspace:FindFirstChild("Delivery System") and workspace["Delivery System"]:FindFirstChild("GetPackage")
+                        if station then
+                            hrp.CFrame = station.CFrame + Vector3.new(0, 5, 0)
+                            task.wait(0.01)
+                            local p = station:FindFirstChildOfClass("ProximityPrompt") or station:FindFirstChild("ReceivePrompt", true)
+                            if p then fireproximityprompt(p) end
+                        end
+                    else
+                        local stuckCount = 0
+                        repeat
+                            hrp.CFrame = target.CFrame + Vector3.new(0, 5, (stuckCount % 2 == 0 and 0.05 or -0.05))
+                            
+                            local dPrompt = target:FindFirstChild("DeliverPrompt", true) or target:FindFirstChildOfClass("ProximityPrompt")
+                            if dPrompt then fireproximityprompt(dPrompt) end
+                            
+                            for _, p in pairs(workspace:GetDescendants()) do
+                                if p:IsA("ProximityPrompt") and p.Name == "DeliverPrompt" then
+                                    if (p.Parent.Position - hrp.Position).Magnitude <= 15 then
+                                        fireproximityprompt(p)
+                                    end
+                                end
+                            end
+
+                            task.wait(0.01)
+                            stuckCount += 1
+                            if stuckCount > 400 then break end
+                        until not workspace:FindFirstChild("Delivery_FakeTarget") or not _G.AutoDelivery
+                        
+                        if stuckCount > 400 or workspace:FindFirstChild("Delivery_FakeTarget") then
+                            pcall(function()
+                                if target then target:Destroy() end
+                                hrp.CFrame += Vector3.new(0, 500, 0)
+                                task.wait(0.01)
+                            end)
+                        end
                     end
                 end
-            end)
-        else
-            part.Transparency = 1
-            part.CanCollide = false
-            _G.AutoTP = false
-        end
+                task.wait(0.01)
+            end
+        end)
     end
 })
-
 
 local function getShopItem(textContains)
     local NK = workspace:WaitForChild("NK ITEM")
