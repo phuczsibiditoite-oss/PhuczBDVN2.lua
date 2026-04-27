@@ -226,7 +226,6 @@ Farm:Button({
         _G.AutoDelivery = true
         local player = game.Players.LocalPlayer
 
-        -- ================= ANTI AFK =================
         local VirtualUser = game:GetService("VirtualUser")
 
         player.Idled:Connect(function()
@@ -241,9 +240,7 @@ Farm:Button({
                 task.wait(60)
             end
         end)
-        -- ===========================================
 
-        -- 1. DỌN DẸP MAP & GUI
         pcall(function()
             local playerGui = player:WaitForChild("PlayerGui")
             for _, gui in pairs(playerGui:GetChildren()) do
@@ -258,7 +255,6 @@ Farm:Button({
             end
         end)
 
-        -- 2. ÉP PROMPT 0S (Liên tục)
         _G.PromptConn = workspace.DescendantAdded:Connect(function(v)
             if v:IsA("ProximityPrompt") then v.HoldDuration = 0 end
         end)
@@ -271,7 +267,6 @@ Farm:Button({
             end
         end)
 
-        -- 3. GUI (GIỮ NGUYÊN)
         local gui = Instance.new("ScreenGui")
         gui.IgnoreGuiInset = true
         gui.ResetOnSpawn = false
@@ -338,8 +333,6 @@ Farm:Button({
                 player
             )
         end)
-
-        -- 4. FARM (GIỮ NGUYÊN)
         task.spawn(function()
             while _G.AutoDelivery do
                 local char = player.Character
@@ -449,54 +442,6 @@ Shop2:Button({
     end
 })
 Shop2:Button({
-    Title = "Mua Ticket",
-    Icon = "ticket",
-    Callback = function()
-        local item = getShopItem("Buy Ticket")
-        if not item then
-            WindUI:Notify({Title="Không tìm thấy Ticket",Icon="x"}); return
-        end
-        local cd = item:FindFirstChildOfClass("ClickDetector")
-        if cd then fireclickdetector(cd); WindUI:Notify({Title="Đã mua Ticket",Icon="check"}) end
-    end
-})
-Shop2:Button({
-    Title = "Mua Đèn Pin",
-    Icon = "flashlight",
-    Callback = function()
-        local item = getShopItem("Mua đèn pin")
-        if not item then
-            WindUI:Notify({Title="Không tìm thấy đèn pin",Icon="x"}); return
-        end
-        local cd = item:FindFirstChildOfClass("ClickDetector")
-        if cd then fireclickdetector(cd); WindUI:Notify({Title="Đã mua đèn pin",Icon="check"}) end
-    end
-})
-Shop2:Button({
-    Title = "Mua Vé Máy Bay",
-    Icon = "plane",
-    Callback = function()
-        local item = getShopItem("Mua Ve May Bay")
-        if not item then
-            WindUI:Notify({Title="Không tìm thấy vé máy bay",Icon="x"}); return
-        end
-        local cd = item:FindFirstChildOfClass("ClickDetector")
-        if cd then fireclickdetector(cd); WindUI:Notify({Title="Đã mua vé máy bay",Icon="check"}) end
-    end
-})
-Shop2:Button({
-    Title = "Mua Căn Cước Công Dân",
-    Icon = "id-card",
-    Callback = function()
-        local item = getShopItem("Căn cước công dân")
-        if not item then
-            WindUI:Notify({Title="Không tìm thấy item",Icon="x"}); return
-        end
-        local cd = item:FindFirstChildOfClass("ClickDetector")
-        if cd then fireclickdetector(cd); WindUI:Notify({Title="Đã mua CCCD",Icon="check"}) end
-    end
-})
-Shop2:Button({
     Title = "Mua Trowel",
     Icon = "cuboid",
     Callback = function()
@@ -524,33 +469,6 @@ Shop2:Button({
         end
     end
 })
-Shop2:Button({
-    Title = "Mua Giấy phép lái xe",
-    Icon = "id-card",
-    Callback = function()
-        local item = getShopItem("Giấy phép lái xe")
-        if not item then
-            WindUI:Notify({
-                Title = "Không tìm thấy item",
-                Desc = "Không tìm thấy 'Giấy phép lái xe: 100VND'",
-                Icon = "x"
-            })
-            return
-        end
-        local cd = item:FindFirstChildOfClass("ClickDetector")
-        if cd then
-            fireclickdetector(cd)
-            WindUI:Notify({
-                Title = "Đã mua ",
-                Icon = "check"
-            })
-        else
-            WindUI:Notify({
-                Title = "Lỗi",
-                Icon = "alert-triangle"
-            })
-        end
-    end
 })
 Shop1:Button({
     Title = "Mua RPG",
@@ -560,7 +478,7 @@ Shop1:Button({
         if not item then
             WindUI:Notify({
                 Title = "Không tìm thấy item",
-                Desc = "Không tìm thấy 'RPG: 100000 VND'",
+                Desc = "Không tìm thấy 'RPG: 1000000 VND'",
                 Icon = "x"
             })
             return
@@ -610,35 +528,7 @@ Shop1:Button({
         end
     end
 })
-Shop1:Button({
-    Title = "Mua Classic Sword",
-    Icon = "sword",
-    Callback = function()
-        local item = getShopItem("Classic Sword")
-        if not item then
-            WindUI:Notify({
-                Title = "Không tìm thấy item",
-                Desc = "Không tìm thấy 'Classic Sword: 200 VND'",
-                Icon = "x"
-            })
-            return
-        end
-        local cd = item:FindFirstChildOfClass("ClickDetector")
-        if cd then
-            fireclickdetector(cd)
-            WindUI:Notify({
-                Title = "Đã mua Classic Sword",
-                Icon = "check"
-            })
-        else
-            WindUI:Notify({
-                Title = "Lỗi",
-                Desc = "Không có ClickDetector của item này!",
-                Icon = "alert-triangle"
-            })
-        end
-    end
-})
+
 local teleportList = {
     ["Sảnh"] = Vector3.new(17, 4, -2015),
     ["Quán Cafe"] = Vector3.new(613, 3, -940)
